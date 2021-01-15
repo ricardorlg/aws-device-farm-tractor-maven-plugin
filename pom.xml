@@ -26,6 +26,11 @@
             <id>mavenCentral</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
+        <repository>
+            <id>github</id>
+            <name>GitHub Device Farm Tractor Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/ricardorlg/aws-device-farm-tractor</url>
+        </repository>
     </repositories>
 
     <build>
