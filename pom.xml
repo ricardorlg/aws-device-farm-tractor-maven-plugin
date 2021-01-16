@@ -6,7 +6,7 @@
 
     <artifactId>tractor-maven-plugin</artifactId>
     <groupId>com.ricardorlg.devicefarm</groupId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>maven-plugin</packaging>
     <name>AWS Device farm tractor maven plugin</name>
     <url>http://maven.apache.org</url>
@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.core.version>3.6.3</maven.core.version>
         <maven.plugin.version>3.6.0</maven.plugin.version>
-        <tractor.version>1.0.1</tractor.version>
+        <tractor.version>1.0.2</tractor.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <arrow.version>0.11.0</arrow.version>
