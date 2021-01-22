@@ -3,6 +3,7 @@ package com.ricardorlg.devicefarm.tractor.mavem
 import arrow.core.Either
 import com.ricardorlg.devicefarm.tractor.controller.services.implementations.DefaultDeviceFarmTractorLogger
 import com.ricardorlg.devicefarm.tractor.factory.DeviceFarmTractorFactory
+import com.ricardorlg.devicefarm.tractor.model.DeviceFarmTractorError
 import kotlinx.coroutines.runBlocking
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugin.MojoExecutionException
@@ -62,6 +63,22 @@ class DeviceFarmTractorMavenPlugin : AbstractMojo() {
     @Parameter(property = "aws.clean.uploads", required = false)
     private val cleanState = true
 
+    @Parameter(property = "aws.strict", required = false)
+    private val strictRun = true
+
+    private val banner = """
+ _______           _______  _          ______  _________ _______ __________________ _______  _          ______   _______          _________ _______  _______    _______  _______  _______  _______ 
+(  ___  )|\     /|(  ___  )( \        (  __  \ \__   __/(  ____ \\__   __/\__   __/(  ___  )( \        (  __  \ (  ____ \|\     /|\__   __/(  ____ \(  ____ \  (  ____ \(  ___  )(  ____ )(       )
+| (   ) || )   ( || (   ) || (        | (  \  )   ) (   | (    \/   ) (      ) (   | (   ) || (        | (  \  )| (    \/| )   ( |   ) (   | (    \/| (    \/  | (    \/| (   ) || (    )|| () () |
+| (___) || |   | || (___) || |        | |   ) |   | |   | |         | |      | |   | (___) || |        | |   ) || (__    | |   | |   | |   | |      | (__      | (__    | (___) || (____)|| || || |
+|  ___  |( (   ) )|  ___  || |        | |   | |   | |   | | ____    | |      | |   |  ___  || |        | |   | ||  __)   ( (   ) )   | |   | |      |  __)     |  __)   |  ___  ||     __)| |(_)| |
+| (   ) | \ \_/ / | (   ) || |        | |   ) |   | |   | | \_  )   | |      | |   | (   ) || |        | |   ) || (       \ \_/ /    | |   | |      | (        | (      | (   ) || (\ (   | |   | |
+| )   ( |  \   /  | )   ( || (____/\  | (__/  )___) (___| (___) |___) (___   | |   | )   ( || (____/\  | (__/  )| (____/\  \   /  ___) (___| (____/\| (____/\  | )      | )   ( || ) \ \__| )   ( |
+|/     \|   \_/   |/     \|(_______/  (______/ \_______/(_______)\_______/   )_(   |/     \|(_______/  (______/ (_______/   \_/   \_______/(_______/(_______/  |/       |/     \||/   \__/|/     \|
+
+With love from ricardorlg
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+"""
 
     override fun execute() {
         runBlocking {
@@ -73,6 +90,7 @@ class DeviceFarmTractorMavenPlugin : AbstractMojo() {
                 sessionToken = sessionToken,
                 region = region
             )
+            logger.logStatus("\r\n" + banner)
             when (runner) {
                 is Either.Left -> throw MojoExecutionException("There was an error loading the test runner", runner.a)
                 is Either.Right -> {
@@ -93,16 +111,33 @@ class DeviceFarmTractorMavenPlugin : AbstractMojo() {
                                 cleanStateAfterRun = cleanState
                             )
                     }.fold(
-                        onFailure = { throw MojoExecutionException("There was an error test execution", it) },
+                        onFailure = {
+                            when {
+                                strictRun -> when (it) {
+                                    is DeviceFarmTractorError -> throw MojoExecutionException(it.message, it.cause)
+                                    else -> throw MojoExecutionException("There was an error in the test execution", it)
+                                }
+                                it is DeviceFarmTractorError -> logger.logError(it.cause, it.message)
+                                else -> logger.logError(it, it.message ?: "There was an error in the text execution")
+                            }
+                        },
                         onSuccess = {
-                            if (it.result() != ExecutionResult.PASSED)
-                                throw MojoFailureException("Tests result was not success - actual result = ${it.result()}")
+                            logger.logStatus("Test execution has been completed")
+                            val devicesResultsTable = runner.b.getDeviceResultsTable(it)
+                            if (devicesResultsTable.isNotEmpty())
+                                logger.logStatus("\r\n" + devicesResultsTable)
+                            if (it.result() != ExecutionResult.PASSED) {
+                                if (strictRun)
+                                    throw MojoFailureException("Tests result was not success - actual result = ${it.result()}")
+                                else
+                                    logger.logError(msg = "Tests result was not success - actual result = ${it.result()}")
+                            } else {
+                                logger.logStatus("Test execution has successfully finished")
+                            }
                         }
                     )
                 }
             }
         }
-
-
     }
 }
