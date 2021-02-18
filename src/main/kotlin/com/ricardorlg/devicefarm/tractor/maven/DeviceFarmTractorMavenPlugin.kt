@@ -1,4 +1,4 @@
-package com.ricardorlg.devicefarm.tractor.mavem
+package com.ricardorlg.devicefarm.tractor.maven
 
 import arrow.core.Either
 import com.ricardorlg.devicefarm.tractor.controller.services.implementations.DefaultDeviceFarmTractorLogger
@@ -39,9 +39,6 @@ class DeviceFarmTractorMavenPlugin : AbstractMojo() {
     @Parameter(property = "aws.app.path", required = true)
     private lateinit var appPath: String
 
-    @Parameter(property = "aws.app.type", required = true)
-    private lateinit var appType: TestProjectTypes
-
     @Parameter(property = "aws.tests.path", required = true)
     private lateinit var testsProjectPath: String
 
@@ -65,6 +62,12 @@ class DeviceFarmTractorMavenPlugin : AbstractMojo() {
 
     @Parameter(property = "aws.strict", required = false)
     private val strictRun = true
+
+    @Parameter(property = "aws.metered", required = false)
+    private val meteredTest = true
+
+    @Parameter(property = "aws.disable.app.performance.monitoring", required = false)
+    private val disableAppPerformanceMonitoring = false
 
     private val banner = """
  _______           _______  _          ______  _________ _______ __________________ _______  _          ______   _______          _________ _______  _______    _______  _______  _______  _______ 
@@ -101,14 +104,15 @@ With love from ricardorlg
                                 projectName = projectName,
                                 devicePoolName = devicePool,
                                 appPath = appPath,
-                                appUploadType = appType.toAwsUploadType(),
                                 testProjectPath = testsProjectPath,
                                 testSpecPath = testSpecFilePath,
                                 captureVideo = captureVideo,
                                 runName = testRunName,
                                 testReportsBaseDirectory = testReportsBaseDirectory,
                                 downloadReports = downloadReports,
-                                cleanStateAfterRun = cleanState
+                                cleanStateAfterRun = cleanState,
+                                meteredTests = meteredTest,
+                                disablePerformanceMonitoring = disableAppPerformanceMonitoring
                             )
                     }.fold(
                         onFailure = {
