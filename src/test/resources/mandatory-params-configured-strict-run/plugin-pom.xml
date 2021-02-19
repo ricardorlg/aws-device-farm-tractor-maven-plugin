@@ -24,6 +24,9 @@
                 <artifactId>devicefarm-tractor-maven-plugin</artifactId>
                 <version>1.0.4</version>
                 <configuration>
+                    <accessKeyId>accessKeyId</accessKeyId>
+                    <secretAccessKey>secretAccessKey</secretAccessKey>
+                    <region>us-west-2</region>
                     <projectName>test project</projectName>
                     <appPath>user/app.apk</appPath>
                     <testsProjectPath>src/project.zip</testsProjectPath>

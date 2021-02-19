@@ -39,9 +39,7 @@ class DeviceFarmTractorMavenPluginTest : AbstractMojoTestCase() {
     @Test
     fun testPluginFailsWhenProjectNameIsNotConfigured() {
         val pluginPom = getBasedir() + "/src/test/resources/project-name-empty/plugin-pom.xml"
-        println(pluginPom)
         val deviceFarmPlugin = lookupMojo("runAwsTests", pluginPom) as DeviceFarmTractorMavenPlugin
-        println(deviceFarmPlugin.projectName.ifEmpty { "esta bien" })
         Assertions.assertThatExceptionOfType(MojoExecutionException::class.java)
             .isThrownBy(deviceFarmPlugin::execute)
             .withMessage("There was an error in the test execution")
