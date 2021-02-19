@@ -24,5 +24,3 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
     - name: Build with Maven
       run: mvn clean install
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

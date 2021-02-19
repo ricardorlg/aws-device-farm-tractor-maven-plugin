@@ -4,13 +4,33 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tractor-maven-plugin</artifactId>
-    <groupId>com.ricardorlg.devicefarm</groupId>
-    <version>1.0.3</version>
+    <artifactId>devicefarm-tractor-maven-plugin</artifactId>
+    <groupId>io.github.ricardorlg</groupId>
+    <version>1.0.4</version>
     <packaging>maven-plugin</packaging>
     <name>AWS Device farm tractor maven plugin</name>
-    <url>http://maven.apache.org</url>
-
+    <description>Maven plugin to run Serenity BDD appium tests in AWS Device farm, using device farm tractor
+    </description>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+    <url>https://github.com/ricardorlg/aws-device-farm-tractor-maven-plugin</url>
+    <developers>
+        <developer>
+            <id>ricardorlg</id>
+            <name>Ricardo Larrahondo</name>
+            <email>ricardolarrahondo2@hotmail.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:https://github.com/ricardorlg/aws-device-farm-tractor-maven-plugin.git</connection>
+        <developerConnection>scm:git:https://github.com/ricardorlg/aws-device-farm-tractor-maven-plugin.git
+        </developerConnection>
+        <url>https://github.com/ricardorlg/aws-device-farm-tractor-maven-plugin</url>
+    </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.core.version>3.6.3</maven.core.version>
@@ -22,26 +42,6 @@
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <arrow.version>0.11.0</arrow.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>mavenCentral</id>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-        <repository>
-            <id>github</id>
-            <name>GitHub Device Farm Tractor Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/ricardorlg/aws-device-farm-tractor</url>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/ricardorlg/aws-device-farm-tractor-maven-plugin</url>
-        </repository>
-    </distributionManagement>
 
     <build>
         <sourceDirectory>src/main/kotlin</sourceDirectory>
@@ -83,9 +83,48 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -93,8 +132,8 @@
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.ricardorlg.devicefarm</groupId>
-            <artifactId>tractor</artifactId>
+            <groupId>io.github.ricardorlg</groupId>
+            <artifactId>devicefarm-tractor</artifactId>
             <version>${tractor.version}</version>
         </dependency>
         <dependency>
@@ -120,4 +159,43 @@
             <version>${kotlin.coroutines.version}</version>
         </dependency>
     </dependencies>
+    <profiles>
+        <profile>
+            <id>github</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub Packages</name>
+                    <url>https://maven.pkg.github.com/ricardorlg/aws-device-farm-tractor-maven-plugin</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>central</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.7</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

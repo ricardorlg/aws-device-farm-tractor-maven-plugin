@@ -1,9 +1,9 @@
-package com.ricardorlg.devicefarm.tractor.maven
+package io.github.ricardorlg.devicefarm.tractor.maven
 
 import arrow.core.Either
-import com.ricardorlg.devicefarm.tractor.controller.services.implementations.DefaultDeviceFarmTractorLogger
-import com.ricardorlg.devicefarm.tractor.factory.DeviceFarmTractorFactory
-import com.ricardorlg.devicefarm.tractor.model.DeviceFarmTractorError
+import io.github.ricardorlg.devicefarm.tractor.controller.services.implementations.DefaultDeviceFarmTractorLogger
+import io.github.ricardorlg.devicefarm.tractor.factory.DeviceFarmTractorFactory
+import io.github.ricardorlg.devicefarm.tractor.model.DeviceFarmTractorError
 import kotlinx.coroutines.runBlocking
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugin.MojoExecutionException
