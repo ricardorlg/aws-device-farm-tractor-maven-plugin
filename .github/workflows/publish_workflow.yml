@@ -1,4 +1,4 @@
-name: Publish Device farm tractor plugin to GitHub Packages
+name: Publish Device farm tractor plugin to GitHub Packages and Maven central
 on:
   release:
     types: [published]
@@ -14,8 +14,12 @@ jobs:
         run: mvn --batch-mode deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Decode
+        run: |
+          echo "${{secrets.SIGNING_SECRET_KEY_RING_FILE}}" > ~/.m2/secring.gpg.b64
+          base64 -d ~/.m2/secring.gpg.b64 > ~/.m2/secring.gpg
       - name: Publish package to central
-        run: mvn -Pcentral --batch-mode deploy
+        run: mvn -Pcentral --batch-mode deploy -Dgpg.keyname=${{secrets.SIGNING_KEY_ID}} -Dgpg.passphrase=${{secrets.SIGNING_PASSWORD}} -Dgpg.secretKeyring=$(echo ~/.m2/secring.gpg)
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
