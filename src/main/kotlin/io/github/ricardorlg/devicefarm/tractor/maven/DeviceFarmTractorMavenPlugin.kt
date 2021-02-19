@@ -95,7 +95,13 @@ With love from ricardorlg
             )
             logger.logStatus("\r\n" + banner)
             when (runner) {
-                is Either.Left -> throw MojoExecutionException("There was an error loading the test runner", runner.a)
+                is Either.Left -> {
+                    if (strictRun) {
+                        throw MojoExecutionException("There was an error creating the tractor runner", runner.a)
+                    } else {
+                        logger.logError(runner.a, "There was an error creating the tractor runner")
+                    }
+                }
                 is Either.Right -> {
                     kotlin.runCatching {
                         runner

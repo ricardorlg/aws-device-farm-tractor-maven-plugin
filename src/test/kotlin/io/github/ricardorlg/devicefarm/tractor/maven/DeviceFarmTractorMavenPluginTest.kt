@@ -1,5 +1,6 @@
 package io.github.ricardorlg.devicefarm.tractor.maven
 
+import arrow.core.left
 import arrow.core.right
 import io.github.ricardorlg.devicefarm.tractor.factory.DeviceFarmTractorFactory
 import io.github.ricardorlg.devicefarm.tractor.runner.DeviceFarmTractorRunner
@@ -283,5 +284,59 @@ class DeviceFarmTractorMavenPluginTest : AbstractMojoTestCase() {
             clearMocks(runner, mockLogger)
             unmockkObject(DeviceFarmTractorFactory, KotlinLogging)
         }
+    }
+
+    @Test
+    fun testPluginShouldFailWhenThereIsAnErrorCreatingTractorRunnerAndStrictRunIsUsed() {
+        val expectedException = RuntimeException("expected exception")
+        mockkObject(DeviceFarmTractorFactory)
+        coEvery {
+            DeviceFarmTractorFactory.createRunner(
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any()
+            )
+        } returns expectedException.left()
+
+        val pluginPom = getBasedir() + "/src/test/resources/mandatory-params-configured-strict-run/plugin-pom.xml"
+        val deviceFarmPlugin = lookupMojo("runAwsTests", pluginPom) as DeviceFarmTractorMavenPlugin
+
+        Assertions.assertThatExceptionOfType(MojoExecutionException::class.java)
+            .isThrownBy(deviceFarmPlugin::execute)
+            .withCause(expectedException)
+        unmockkObject(DeviceFarmTractorFactory)
+    }
+
+    @Test
+    fun testPluginShouldNotFailWhenThereIsAnErrorCreatingTractorRunnerAndStrictRunIsDisabled() {
+        val thrownException = RuntimeException("expected exception")
+        val mockLogger = mockk<KLogger>()
+        val errorSlot = slot<Throwable>()
+        val errorMessageSlot = slot<() -> Any?>()
+        every { mockLogger.error(capture(errorSlot), capture(errorMessageSlot)) } just runs
+        mockkObject(DeviceFarmTractorFactory, KotlinLogging)
+        every { KotlinLogging.logger(any<String>()) } returns mockLogger
+        coEvery {
+            DeviceFarmTractorFactory.createRunner(
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any()
+            )
+        } returns thrownException.left()
+
+        val pluginPom = getBasedir() + "/src/test/resources/mandatory-params-configured-no-strict-run/plugin-pom.xml"
+        val deviceFarmPlugin = lookupMojo("runAwsTests", pluginPom) as DeviceFarmTractorMavenPlugin
+        Assertions.assertThatCode { deviceFarmPlugin.execute() }.doesNotThrowAnyException()
+        Assertions.assertThat(errorSlot.captured).isEqualTo(thrownException)
+        Assertions.assertThat(errorMessageSlot.captured.invoke())
+            .isEqualTo("There was an error creating the tractor runner")
+        clearMocks(mockLogger)
+        unmockkObject(DeviceFarmTractorFactory, KotlinLogging)
     }
 }
