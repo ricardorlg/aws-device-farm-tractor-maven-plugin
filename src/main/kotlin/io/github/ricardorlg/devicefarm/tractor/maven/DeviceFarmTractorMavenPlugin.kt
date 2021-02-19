@@ -31,7 +31,7 @@ class DeviceFarmTractorMavenPlugin : AbstractMojo() {
     private val region = ""
 
     @Parameter(property = "aws.project.name", required = true)
-    private lateinit var projectName: String
+     lateinit var projectName: String
 
     @Parameter(property = "aws.device.pool", required = false)
     private val devicePool: String = ""
