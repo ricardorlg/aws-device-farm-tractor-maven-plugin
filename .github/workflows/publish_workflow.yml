@@ -10,16 +10,17 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Publish package to Github
-        run: mvn --batch-mode deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Decode
         run: |
           echo "${{secrets.SIGNING_SECRET_KEY_RING_FILE}}" > ~/.m2/secring.gpg.b64
           base64 -d ~/.m2/secring.gpg.b64 > ~/.m2/secring.gpg
+      - name: Publish package to Github
+        run: mvn --batch-mode deploy -Dmaven.test.skip=true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish package to central
-        run: mvn -Pcentral --batch-mode deploy -Dgpg.keyname=${{secrets.SIGNING_KEY_ID}} -Dgpg.passphrase=${{secrets.SIGNING_PASSWORD}} -Dgpg.secretKeyring=$(echo ~/.m2/secring.gpg)
+        if: ${{ always() }}
+        run: mvn -Pcentral --batch-mode deploy -Dmaven.test.skip=true -Dgpg.keyname=${{secrets.SIGNING_KEY_ID}} -Dgpg.passphrase=${{secrets.SIGNING_PASSWORD}} -Dgpg.secretKeyring=$(echo ~/.m2/secring.gpg)
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
