@@ -42,7 +42,7 @@
         <arrow.version>0.13.2</arrow.version>
         <maven_gpg_version>3.0.1</maven_gpg_version>
         <mockk_version>1.11.0</mockk_version>
-        <aws_version>2.16.83</aws_version>
+        <aws_version>2.16.85</aws_version>
     </properties>
 
     <build>
