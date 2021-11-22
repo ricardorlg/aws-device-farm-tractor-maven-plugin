@@ -33,7 +33,7 @@
     </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.api.version>3.8.3</maven.api.version>
+        <maven.api.version>3.8.4</maven.api.version>
         <maven.plugin.version>3.6.1</maven.plugin.version>
         <tractor.version>1.0.6</tractor.version>
         <kotlin.version>1.6.0</kotlin.version>
