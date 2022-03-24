@@ -35,7 +35,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.api.version>3.8.5</maven.api.version>
         <maven.plugin.version>3.6.4</maven.plugin.version>
-        <tractor.version>1.0.6</tractor.version>
+        <tractor.version>1.1.0</tractor.version>
         <kotlin.version>1.6.10</kotlin.version>
         <kotlin.coroutines.version>1.6.0-native-mt</kotlin.coroutines.version>
         <kotlin.code.style>official</kotlin.code.style>
