@@ -3,6 +3,7 @@ package io.github.ricardorlg.devicefarm.tractor.maven
 import arrow.core.left
 import arrow.core.right
 import io.github.ricardorlg.devicefarm.tractor.factory.DeviceFarmTractorFactory
+import io.github.ricardorlg.devicefarm.tractor.model.TestExecutionType
 import io.github.ricardorlg.devicefarm.tractor.runner.DeviceFarmTractorRunner
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
@@ -50,15 +51,15 @@ class DeviceFarmTractorMavenPluginTest : AbstractMojoTestCase() {
     }
 
     @Test
-    fun testPluginFailsWhenAppPathIsNotConfigured() {
-        val pluginPom = getBasedir() + "/src/test/resources/app-path-empty/plugin-pom.xml"
+    fun testPluginFailsWhenTestExecutionTypeIsNotConfigured() {
+        val pluginPom = getBasedir() + "/src/test/resources/test-execution-type-empty/plugin-pom.xml"
         val deviceFarmPlugin = lookupMojo("runAwsTests", pluginPom) as DeviceFarmTractorMavenPlugin
         Assertions.assertThatExceptionOfType(MojoExecutionException::class.java)
             .isThrownBy(deviceFarmPlugin::execute)
             .withMessage("There was an error in the test execution")
             .withRootCauseInstanceOf(UninitializedPropertyAccessException::class.java)
             .havingCause()
-            .withMessage("lateinit property appPath has not been initialized")
+            .withMessage("lateinit property testExecutionType has not been initialized")
     }
 
     @Test
@@ -151,7 +152,8 @@ class DeviceFarmTractorMavenPluginTest : AbstractMojoTestCase() {
                     "",
                     appPath = appPath,
                     testProjectPath = testsProjectPath,
-                    testSpecPath = testSpecFilePath
+                    testSpecPath = testSpecFilePath,
+                    testExecutionType = TestExecutionType.MOBILE_NATIVE
                 )
                 runner.getDeviceResultsTable(result)
             }
@@ -207,7 +209,8 @@ class DeviceFarmTractorMavenPluginTest : AbstractMojoTestCase() {
                     "",
                     appPath = appPath,
                     testProjectPath = testsProjectPath,
-                    testSpecPath = testSpecFilePath
+                    testSpecPath = testSpecFilePath,
+                    testExecutionType = TestExecutionType.MOBILE_NATIVE
                 )
                 runner.getDeviceResultsTable(result)
             }
@@ -228,18 +231,19 @@ class DeviceFarmTractorMavenPluginTest : AbstractMojoTestCase() {
             coEvery { runner.getDeviceResultsTable(any()) } returns ""
             coEvery {
                 runner.runTests(
-                    any(),
-                    any(),
-                    any(),
-                    any(),
-                    any(),
-                    any(),
-                    any(),
-                    any(),
-                    any(),
-                    any(),
-                    any(),
-                    any()
+                    projectName = any(),
+                    devicePoolName = any(),
+                    appPath = any(),
+                    testExecutionType = any(),
+                    testProjectPath = any(),
+                    testSpecPath = any(),
+                    captureVideo = any(),
+                    runName = any(),
+                    testReportsBaseDirectory = any(),
+                    downloadReports = any(),
+                    cleanStateAfterRun = any(),
+                    meteredTests = any(),
+                    disablePerformanceMonitoring = any()
                 )
             } returns result
             mockkObject(DeviceFarmTractorFactory, KotlinLogging)
@@ -248,12 +252,13 @@ class DeviceFarmTractorMavenPluginTest : AbstractMojoTestCase() {
             } returns mockLogger
             coEvery {
                 DeviceFarmTractorFactory.createRunner(
-                    any(),
-                    any(),
-                    any(),
-                    any(),
-                    any(),
-                    any()
+                    deviceFarmClientBuilder = any(),
+                    logger = any(),
+                    accessKeyId = any(),
+                    secretAccessKey = any(),
+                    sessionToken = any(),
+                    region = any(),
+                    profileName = any()
                 )
             } returns runner.right()
             val pluginPom =
@@ -268,7 +273,8 @@ class DeviceFarmTractorMavenPluginTest : AbstractMojoTestCase() {
             coVerify {
                 runner.runTests(
                     projectName = projectName,
-                    "",
+                    devicePoolName = "",
+                    testExecutionType = TestExecutionType.MOBILE_NATIVE,
                     appPath = appPath,
                     testProjectPath = testsProjectPath,
                     testSpecPath = testSpecFilePath

@@ -22,12 +22,13 @@
             <plugin>
                 <groupId>io.github.ricardorlg</groupId>
                 <artifactId>devicefarm-tractor-maven-plugin</artifactId>
-                <version>1.0.4</version>
+                <version>1.1.0</version>
                 <configuration>
                     <accessKeyId>accessKeyId</accessKeyId>
                     <secretAccessKey>secretAccessKey</secretAccessKey>
                     <region>eu-west-1</region>
                     <projectName>test project</projectName>
+                    <testExecutionType>MOBILE_NATIVE</testExecutionType>
                     <appPath>user/app.apk</appPath>
                     <testsProjectPath>src/project.zip</testsProjectPath>
                     <testSpecFilePath>src/specfile.yaml</testSpecFilePath>

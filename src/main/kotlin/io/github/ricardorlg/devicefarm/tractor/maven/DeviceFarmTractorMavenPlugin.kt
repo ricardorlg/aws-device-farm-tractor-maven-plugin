@@ -4,6 +4,7 @@ import arrow.core.Either
 import io.github.ricardorlg.devicefarm.tractor.controller.services.implementations.DefaultDeviceFarmTractorLogger
 import io.github.ricardorlg.devicefarm.tractor.factory.DeviceFarmTractorFactory
 import io.github.ricardorlg.devicefarm.tractor.model.DeviceFarmTractorError
+import io.github.ricardorlg.devicefarm.tractor.model.TestExecutionType
 import kotlinx.coroutines.runBlocking
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugin.MojoExecutionException
@@ -36,8 +37,11 @@ class DeviceFarmTractorMavenPlugin : AbstractMojo() {
     @Parameter(property = "aws.device.pool", required = false)
     private val devicePool: String = ""
 
-    @Parameter(property = "aws.app.path", required = true)
-    private lateinit var appPath: String
+    @Parameter(property = "aws.app.path", required = false)
+    private val appPath: String = ""
+
+    @Parameter(property = "aws.test.type", required = true)
+    private lateinit var testExecutionType: TestExecutionType
 
     @Parameter(property = "aws.tests.path", required = true)
     private lateinit var testsProjectPath: String
@@ -113,6 +117,7 @@ With love from ricardorlg
                             .runTests(
                                 projectName = projectName,
                                 devicePoolName = devicePool,
+                                testExecutionType=testExecutionType,
                                 appPath = appPath,
                                 testProjectPath = testsProjectPath,
                                 testSpecPath = testSpecFilePath,

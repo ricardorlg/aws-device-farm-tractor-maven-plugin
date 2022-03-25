@@ -26,7 +26,11 @@
                 <configuration>
                     <accessKeyId>accessKeyId</accessKeyId>
                     <secretAccessKey>secretAccessKey</secretAccessKey>
-                    <region>eu-west-1</region>
+                    <region>us-west-2</region>
+                    <projectName>test project</projectName>
+                    <appPath>user/app.apk</appPath>
+                    <testsProjectPath>src/project.zip</testsProjectPath>
+                    <testSpecFilePath>src/specfile.yaml</testSpecFilePath>
                 </configuration>
             </plugin>
         </plugins>
