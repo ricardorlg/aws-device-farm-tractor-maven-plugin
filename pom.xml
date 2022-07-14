@@ -36,7 +36,7 @@
         <maven.api.version>3.8.6</maven.api.version>
         <maven.plugin.version>3.6.4</maven.plugin.version>
         <tractor.version>1.1.0</tractor.version>
-        <kotlin.version>1.7.0</kotlin.version>
+        <kotlin.version>1.7.10</kotlin.version>
         <kotlin.coroutines.version>1.6.4</kotlin.coroutines.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
