@@ -41,7 +41,7 @@
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <arrow.version>1.1.5</arrow.version>
-        <maven_gpg_version>3.0.1</maven_gpg_version>
+        <maven_gpg_version>3.2.7</maven_gpg_version>
         <mockk_version>1.12.5</mockk_version>
         <aws_version>2.18.22</aws_version>
     </properties>
